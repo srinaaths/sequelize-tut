@@ -4,11 +4,20 @@ const sequelize = new Sequelize('sequelize-video', 'srinaaths', '', {
     dialect: 'postgres'
 })
 
-// const myFunc = async () => {
-//     await sequelize.authenticate();
-//     console.log('connected');
-// }
+const User = sequelize.define('user', {
+    username: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+    },
+    password: {
+        type: Sequelize.DataTypes.STRING
+    },
+    age: {
+        type: Sequelize.DataTypes.INTEGER,
+        default: 21
+    }
+})
 
-sequelize.authenticate()
-.then(() => console.log('connected'))
+User.sync()
+.then(() => console.log('synced succesfully'))
 .catch(err => console.log(err))
