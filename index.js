@@ -24,14 +24,15 @@ const Movie = sequelize.define('movie', {
 
 Movie.sync({alter: true})
 .then(() => {
-    return Movie.create({
+    return Movie.bulkCreate([{
         name: 'Call Of Duty',
-        year_of_release: 1998
-    })
+        year_of_release: 2003
+    },{
+        name: 'Call of Duty 2',
+        year_of_release: 2005
+    }])
 })
 .then((data) => {
-    data.name = 'lol changing'
-    data.increment({year_of_release: 2})
-    data.save({fields: ['name']})
+    console.log(data.toJSON())
 })
 .catch(err => console.log(err));
