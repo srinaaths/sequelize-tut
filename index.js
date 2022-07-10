@@ -4,25 +4,34 @@ const sequelize = new Sequelize('sequelize-video', 'srinaaths', '', {
     dialect: 'postgres'
 })
 
-const User = sequelize.define('user', {
-    user_id: {
+const Movie = sequelize.define('movie', {
+    id: {
         type: Sequelize.DataTypes.INTEGER,
-        primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        primaryKey: true
     },
     name: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false
     },
-    date_of_birth: {
-        type: Sequelize.DataTypes.DATE
+    year_of_release: {
+        type: Sequelize.DataTypes.INTEGER,
     }
 }, {
-    freezeTableName: true,
-    timestamps: false
+    timestamps: false,
+    freezeTableName: true
 })
 
-User.drop();
-
-User.sync({force: true})
+Movie.sync({alter: true})
+.then(() => {
+    return Movie.create({
+        name: 'Call Of Duty',
+        year_of_release: 1998
+    })
+})
+.then((data) => {
+    data.name = 'lol changing'
+    data.increment({year_of_release: 2})
+    data.save({fields: ['name']})
+})
+.catch(err => console.log(err));
