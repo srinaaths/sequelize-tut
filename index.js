@@ -42,7 +42,7 @@ const Movie = sequelize.define('movie', {
 
 Movie.sync({alter: true})
 .then(() => {
-    return Movie.findOne({where: {
+    return Movie.findAndCountAll({where: {
         year_of_release: {
             [Op.or]: {
                 [Op.eq]: 2005,
@@ -51,6 +51,8 @@ Movie.sync({alter: true})
     }})
 })
 .then(data => {
-    console.log(data.toJSON())
+    const {count, rows} = data
+    console.log(count);
+    console.log(rows);
 })
 .catch(err => console.log(err))
