@@ -12,7 +12,10 @@ const Movie = sequelize.define('movie', {
     },
     name: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            len: [4, 6]
+        }
     },
     year_of_release: {
         type: Sequelize.DataTypes.INTEGER,
@@ -24,15 +27,14 @@ const Movie = sequelize.define('movie', {
 
 Movie.sync({alter: true})
 .then(() => {
-    return Movie.bulkCreate([{
+    return Movie.create({
         name: 'Call Of Duty',
         year_of_release: 2003
-    },{
-        name: 'Call of Duty 2',
-        year_of_release: 2005
-    }])
+    })
 })
 .then((data) => {
-    console.log(data.toJSON())
+    data.forEach(ele => {
+        console.log(ele.toJSON())
+    })
 })
 .catch(err => console.log(err));
