@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize')
+const {Op} = require('sequelize')
 
 const sequelize = new Sequelize('sequelize-video', 'srinaaths', '', {
     dialect: 'postgres'
@@ -25,15 +26,31 @@ const Movie = sequelize.define('movie', {
     freezeTableName: true
 })
 
+// Movie.sync({alter: true})
+// .then(() => {
+//     return Movie.findAll({
+//         where: {year_of_release: 2003},
+//         order: [['year_of_release', 'ASC']]
+//     })
+// })
+// .then(data => {
+//     data.forEach(ele => {
+//         console.log(ele.toJSON())
+//     })
+// })
+// .catch(err => console.log(err))
+
 Movie.sync({alter: true})
 .then(() => {
-    return Movie.findAll({
-        where: {year_of_release: 2003}
-    })
+    return Movie.findOne({where: {
+        year_of_release: {
+            [Op.or]: {
+                [Op.eq]: 2005,
+            }
+        }
+    }})
 })
 .then(data => {
-    data.forEach(ele => {
-        console.log(ele.toJSON())
-    })
+    console.log(data.toJSON())
 })
 .catch(err => console.log(err))
