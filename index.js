@@ -27,7 +27,9 @@ const Movie = sequelize.define('movie', {
 
 Movie.sync({alter: true})
 .then(() => {
-    return Movie.findAll()
+    return Movie.findAll({
+        attributes: [['name', 'movieName']]
+    })
 })
 .then(data => {
     data.forEach(ele => {
