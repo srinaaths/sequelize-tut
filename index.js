@@ -27,14 +27,11 @@ const Movie = sequelize.define('movie', {
 
 Movie.sync({alter: true})
 .then(() => {
-    return Movie.create({
-        name: 'Call Of Duty',
-        year_of_release: 2003
-    })
+    return Movie.findAll()
 })
-.then((data) => {
+.then(data => {
     data.forEach(ele => {
         console.log(ele.toJSON())
     })
 })
-.catch(err => console.log(err));
+.catch(err => console.log(err))
