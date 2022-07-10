@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const {Op} = require('sequelize')
+const bcrypt = require('bcrypt')
 
 const sequelize = new Sequelize('sequelize-video', 'srinaaths', '', {
     dialect: 'postgres'
@@ -16,10 +17,22 @@ const Movie = sequelize.define('movie', {
         allowNull: false,
         validate: {
             len: [4, 6]
+        },
+        get() {
+            const rawValue = this.getDataValue('name')
+            return rawValue.toLowerCase()
         }
     },
     year_of_release: {
         type: Sequelize.DataTypes.INTEGER,
+    },
+    password: {
+        type: Sequelize.DataTypes.STRING,
+        set(value) {
+            const salt = bcrypt.genSaltSync(12);
+            const hash = bcrypt.hashSync(value, salt)
+            this.setDataValue('password', hash)
+        }
     }
 }, {
     timestamps: false,
@@ -42,17 +55,13 @@ const Movie = sequelize.define('movie', {
 
 Movie.sync({alter: true})
 .then(() => {
-    return Movie.findAndCountAll({where: {
-        year_of_release: {
-            [Op.or]: {
-                [Op.eq]: 2005,
-            }
-        }
-    }})
+    return Movie.create({
+        name: 'hell',
+        password: 'abc',
+        year_of_release: 34342
+    })
 })
 .then(data => {
-    const {count, rows} = data
-    console.log(count);
-    console.log(rows);
+    console.log(data.toJSON())
 })
 .catch(err => console.log(err))
