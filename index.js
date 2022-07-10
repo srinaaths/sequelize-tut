@@ -28,7 +28,7 @@ const Movie = sequelize.define('movie', {
 Movie.sync({alter: true})
 .then(() => {
     return Movie.findAll({
-        attributes: [['name', 'movieName']]
+        attributes: [[sequelize.fn('SUM', sequelize.col('year_of_release')), 'total']]
     })
 })
 .then(data => {
@@ -37,3 +37,5 @@ Movie.sync({alter: true})
     })
 })
 .catch(err => console.log(err))
+
+//comment
