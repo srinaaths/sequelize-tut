@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize')
 const {Op} = require('sequelize')
 const bcrypt = require('bcrypt')
+const zlib = require('zlib')
 
 const sequelize = new Sequelize('sequelize-video', 'srinaaths', '', {
     dialect: 'postgres'
@@ -33,32 +34,37 @@ const Movie = sequelize.define('movie', {
             const hash = bcrypt.hashSync(value, salt)
             this.setDataValue('password', hash)
         }
+    },
+    description: {
+        type: Sequelize.DataTypes.STRING,
+        set(value) {
+            const compressed = zlib.deflateSync(value).toString('base64');
+            this.setDataValue('description', compressed)
+        },
+        get() {
+            const value = this.getDataValue('description');
+            const uncompressed = zlib.inflateSync(Buffer.from(value, 'base64'))
+            return uncompressed.toString();
+        }
+    },
+    aboutUser: {
+        type: Sequelize.DataTypes.VIRTUAL,
+        get() {
+            return `${this.id}`
+        }
     }
 }, {
     timestamps: false,
     freezeTableName: true
 })
 
-// Movie.sync({alter: true})
-// .then(() => {
-//     return Movie.findAll({
-//         where: {year_of_release: 2003},
-//         order: [['year_of_release', 'ASC']]
-//     })
-// })
-// .then(data => {
-//     data.forEach(ele => {
-//         console.log(ele.toJSON())
-//     })
-// })
-// .catch(err => console.log(err))
-
 Movie.sync({alter: true})
 .then(() => {
     return Movie.create({
         name: 'hell',
         password: 'abc',
-        year_of_release: 34342
+        year_of_release: 34342,
+        description: 'hello this is my description'
     })
 })
 .then(data => {
